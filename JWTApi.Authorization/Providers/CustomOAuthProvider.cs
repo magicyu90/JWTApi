@@ -12,7 +12,7 @@ namespace JWTApi.Authorization.Providers
 {
     public class CustomOAuthProvider : OAuthAuthorizationServerProvider
     {
-        public  Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             //return base.ValidateClientAuthentication(context);
 
@@ -47,7 +47,7 @@ namespace JWTApi.Authorization.Providers
 
         }
 
-        public  async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+        public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             //return base.GrantResourceOwnerCredentials(context);
 

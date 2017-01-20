@@ -22,7 +22,10 @@ namespace JWTApi.Authorization.Repository
             {
                 ClientId = "50de53cc8cf04d469eb433ed117895ae",
                 Name = "Hugo Api",
-                Base64Secret = "IxrAjDoa2FqElO7IhrSrUJELhUckePEPVpaePlS_Xaw"
+                // Base64Secret = "IxrAjDoa2FqElO7IhrSrUJELhUckePEPVpaePlS_Xaw"
+                // secret = "b74934289cd34c0c82cc1fc0ae0c3350" 将一个Guid转换为Base64
+                //Base64Secret = "Yjc0OTM0Mjg5Y2QzNGMwYzgyY2MxZmMwYWUwYzMzNTA="
+                Base64Secret = "b74934289cd34c0c82cc1fc0ae0c3350"
             });
         }
 

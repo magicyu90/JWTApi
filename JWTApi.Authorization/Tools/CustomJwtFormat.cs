@@ -41,7 +41,8 @@ namespace JWTApi.Authorization.Tools
 
             string symmetricKeyAsBase64 = audience.Base64Secret;
 
-            var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
+            //var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
+            var keyByteArray = Encoding.UTF8.GetBytes(symmetricKeyAsBase64);
 
             #region  use jose-jwt to generate json web token
             //DateTime issued = DateTime.UtcNow;
