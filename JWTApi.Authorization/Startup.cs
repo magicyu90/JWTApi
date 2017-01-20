@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JWTApi.Authorization.Providers;
+using JWTApi.Authorization.Tools;
 using Microsoft.Owin;
+using Microsoft.Owin.Security.OAuth;
 using Owin;
 
 [assembly: OwinStartup(typeof(JWTApi.Authorization.Startup))]
@@ -12,27 +15,31 @@ namespace JWTApi.Authorization
     {
         public void Configuration(IAppBuilder app)
         {
-            // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
+            HttpConfiguration config = new HttpConfiguration();
 
-            var configuration = new HttpConfiguration();
-
-            //Wep api routes
-            configuration.MapHttpAttributeRoutes();
+            // Web API routes
+            WebApiConfig.Register(config);
 
             ConfigureOAuth(app);
 
-            //support
-            app.Use(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
 
-            app.Use(configuration);
-
+            app.UseWebApi(config);
+            
         }
 
-
-        //config OAuthorizaion
         private void ConfigureOAuth(IAppBuilder app)
         {
-            //todo:config oauth
+            OAuthAuthorizationServerOptions options = new OAuthAuthorizationServerOptions
+            {
+                AllowInsecureHttp = true,
+                TokenEndpointPath = new PathString("/token"),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
+                Provider = new CustomOAuthProvider(),
+                AccessTokenFormat = new CustomJwtFormat("http://localhost")
+            };
+
+            app.UseOAuthAuthorizationServer(options);
 
         }
     }
