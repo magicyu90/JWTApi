@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
-using System.Web;
+using System.IdentityModel.Tokens;
 using JWTApi.Authorization.Entities;
 using JWTApi.Authorization.Repository;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.DataHandler.Encoder;
 using Thinktecture.IdentityModel.Tokens;
+using System.Text;
+using Jose;
+
 
 namespace JWTApi.Authorization.Tools
 {
@@ -44,20 +43,35 @@ namespace JWTApi.Authorization.Tools
 
             var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
 
-            var secKey = new SymmetricSecurityKey(keyByteArray);
+            #region  use jose-jwt to generate json web token
+            //DateTime issued = DateTime.UtcNow;
+            //DateTime expired = DateTime.UtcNow.AddDays(1);
 
-            //  var signingKey = new HmacSigningCredentials(keyByteArray);
-            var signKey = new SigningCredentials(secKey, SecurityAlgorithms.HmacSha256Signature);
+            //var payload = new Dictionary<string, string>
+            //{
+            //    { "iss",_issuer},
+            //    { "aud",audience.ClientId},
+            //    { "iat",UnixTime.ToUnixTime(issued).ToString()},
+            //    { "exp",UnixTime.ToUnixTime(expired).ToString()}
+            //};
 
-            var issued = DateTime.UtcNow;
+            //var jwt = JWT.Encode(payload, keyByteArray, JwsAlgorithm.HS256);
+            #endregion
 
-            var expires = DateTime.UtcNow + TimeSpan.FromDays(1);
+            #region use system.identitymodel.tokens.jwt 4.0.2 to generate jwt
+            var signingKey = new HmacSigningCredentials(keyByteArray);
 
-            var token = new JwtSecurityToken(_issuer, audienceId, data.Identity.Claims, issued, expires, signKey);
+            var issued = data.Properties.IssuedUtc;
+            var expires = data.Properties.ExpiresUtc;
+
+            var token = new JwtSecurityToken(_issuer, audienceId, data.Identity.Claims, issued.Value.UtcDateTime, expires.Value.UtcDateTime, signingKey);
 
             var handler = new JwtSecurityTokenHandler();
 
             var jwt = handler.WriteToken(token);
+
+            #endregion
+
 
             return jwt;
         }
