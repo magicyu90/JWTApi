@@ -42,7 +42,7 @@ namespace JWTApi.Authorization.Providers
                 return Task.FromResult<object>(null);
             }
 
-            if (!client.AppSecret.ToString("N").Equals(secret,StringComparison.OrdinalIgnoreCase))
+            if (!client.AppSecret.ToString("N").Equals(secret, StringComparison.OrdinalIgnoreCase))
             {
                 context.SetError("invalid client", "client id and client secret didn't match.");
                 return Task.FromResult(0);
@@ -79,7 +79,7 @@ namespace JWTApi.Authorization.Providers
 
             var props = new AuthenticationProperties(new Dictionary<string, string>
             {
-                {"audience", context.ClientId??string.Empty }
+                {"audience", context.ClientId.ToLower()??string.Empty }
             });
 
             var ticket = new AuthenticationTicket(identity, props);
