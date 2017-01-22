@@ -29,17 +29,23 @@ namespace JWTApi.Authorization.Providers
                 context.SetError("invali client", "client id is not set.");
                 return Task.FromResult<object>(null);
             }
-            //if (string.IsNullOrEmpty(secret))
-            //{
-            //    context.SetError("invalid client", "client secret is not set.");
-            //    return Task.FromResult<object>(null);
-            //}
+            if (string.IsNullOrEmpty(secret))
+            {
+                context.SetError("invalid client", "client secret is not set.");
+                return Task.FromResult<object>(null);
+            }
 
-            var audience = AudienceRepo.FindAudienceByClientId(clientId);
-            if (audience == null)
+            var client = ClientsRepo.FindByClientId(clientId);
+            if (client == null)
             {
                 context.SetError("invalid client", $"client not found by client id:{clientId}.");
                 return Task.FromResult<object>(null);
+            }
+
+            if (!client.AppSecret.ToString("N").Equals(secret,StringComparison.OrdinalIgnoreCase))
+            {
+                context.SetError("invalid client", "client id and client secret didn't match.");
+                return Task.FromResult(0);
             }
 
             context.Validated();

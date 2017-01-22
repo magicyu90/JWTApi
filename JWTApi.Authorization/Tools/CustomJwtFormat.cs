@@ -8,6 +8,7 @@ using Microsoft.Owin.Security.DataHandler.Encoder;
 using Thinktecture.IdentityModel.Tokens;
 using System.Text;
 using Jose;
+using JWTApi.Authorization.Models;
 
 
 namespace JWTApi.Authorization.Tools
@@ -33,16 +34,19 @@ namespace JWTApi.Authorization.Tools
                 throw new ArgumentNullException("data");
             }
 
-            string audienceId = data.Properties.Dictionary.ContainsKey(AudiencePropertyKey) ? data.Properties.Dictionary[AudiencePropertyKey] : null;
+            string audienceId = data.Properties.Dictionary.ContainsKey(AudiencePropertyKey) ? data.Properties.Dictionary[AudiencePropertyKey].ToLower() : null;
 
             if (string.IsNullOrWhiteSpace(audienceId)) throw new InvalidOperationException("AuthenticationTicket.Properties does not include audience");
 
-            Audience audience = AudienceRepo.FindAudienceByClientId(audienceId);
+            // Audience audience = AudienceRepo.FindAudienceByClientId(audienceId);
+            ClientModel client = ClientsRepo.FindByClientId(audienceId);
 
-            string symmetricKeyAsBase64 = audience.Base64Secret;
+            //string symmetricKeyAsBase64 = audience.Base64Secret;
 
             //var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
-            var keyByteArray = Encoding.UTF8.GetBytes(symmetricKeyAsBase64);
+
+            string appSecretStr = client.AppSecret.ToString("N");
+            var keyByteArray = Encoding.UTF8.GetBytes(appSecretStr);
 
             #region  use jose-jwt to generate json web token
             //DateTime issued = DateTime.UtcNow;
