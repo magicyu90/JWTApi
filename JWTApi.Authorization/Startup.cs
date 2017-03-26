@@ -20,6 +20,7 @@ namespace JWTApi.Authorization
             // Web API routes
             WebApiConfig.Register(config);
 
+            //add comment
             ConfigureOAuth(app);
 
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
